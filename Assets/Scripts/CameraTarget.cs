@@ -20,7 +20,7 @@ public class CameraTarget : MonoBehaviour {
 		}
 
 		if (horizontalInput == 0f && verticalInput == 0f) {
-			transform.localPosition = new Vector3(0, 0, 0);
+			transform.position = transform.parent.position;
 			return;
 		}
 
@@ -28,7 +28,7 @@ public class CameraTarget : MonoBehaviour {
 		direction.Normalize();
 		direction *= distance;
 
-		transform.localPosition = direction;
+		transform.position = transform.parent.position + direction;
 	}
 
 	void OnDrawGizmos() {

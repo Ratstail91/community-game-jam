@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour {
 
 	//movement
 	float moveForce = 400f;
-	float jumpForce = 100f;
+	float jumpForce = 50f;
 	float maxSpeed = 80f;
 	float maxFallSpeed = 400f;
 	Vector2 gravity = new Vector2(0, -200f);
@@ -96,21 +96,26 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void HandleMovement() {
+		//if there's no gravity, float
+		if (defaultGravity.magnitude == 0) {
+			floating = true;
+		}
+
 		//stop the player if input in that direction has been removed
-		if (horizontalInput * rigidBody.velocity.x <= 0 && grounded) {
+		if (horizontalInput * rigidBody.velocity.x <= 0 && grounded && defaultGravity.x == 0) {
 			rigidBody.velocity = new Vector2 (rigidBody.velocity.x * 0.85f, rigidBody.velocity.y);
 		}
 
-		if (verticalInput * rigidBody.velocity.y <= 0 && grounded) {
+		if (-verticalInput * rigidBody.velocity.y <= 0 && grounded && defaultGravity.y == 0) {
 			rigidBody.velocity = new Vector2 (rigidBody.velocity.x, rigidBody.velocity.y * 0.85f);
 		}
 
 		//move in the inputted direction, if not at max speed
-		if (horizontalInput * rigidBody.velocity.x < maxSpeed) {
+		if (horizontalInput * rigidBody.velocity.x < maxSpeed && (floating || defaultGravity.y != 0)) {
 			rigidBody.AddForce(Vector2.right * horizontalInput * moveForce);
 		}
 
-		if (-verticalInput * rigidBody.velocity.y < maxSpeed && floating) {
+		if (-verticalInput * rigidBody.velocity.y < maxSpeed && (floating || defaultGravity.x != 0)) {
 			rigidBody.AddForce(Vector2.up * -verticalInput * moveForce);
 		}
 
@@ -130,7 +135,7 @@ public class PlayerController : MonoBehaviour {
 		}
 
 		//apply gravity
-		if (!grounded && rigidBody.velocity.magnitude < maxFallSpeed) {
+		if (!grounded) {
 			rigidBody.AddForce(gravity);
 		}
 	}
@@ -139,7 +144,12 @@ public class PlayerController : MonoBehaviour {
 		Vector2 pos = new Vector2(position.x - transform.position.x, position.y - transform.position.y);
 
 		pos.Normalize();
-		gravity = pos * gravity.magnitude;
+
+		if (defaultGravity.magnitude != 0) {
+			gravity = pos * gravity.magnitude;
+		} else {
+			gravity = pos * 200;
+		}
 	}
 
 	public void SetDefaultGravity(Vector2 dir) {
