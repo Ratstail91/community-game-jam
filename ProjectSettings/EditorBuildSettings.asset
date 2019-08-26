@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/FakeWin.unity
     guid: 65b7847d2eb891c4c97b34e5b09f74da
+  - enabled: 1
+    path: Assets/Scenes/RealWin.unity
+    guid: 10474636baa21034292bd04db3d9e036
   m_configObjects: {}
